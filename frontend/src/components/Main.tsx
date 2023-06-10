@@ -16,6 +16,8 @@ import {
 } from "@chakra-ui/react";
 import { Fragment, useState } from "react";
 import Future from "./Future";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -64,10 +66,21 @@ export default function Home() {
     })();
   };
 
+  const router = useRouter();
+
   return (
-    <VStack>
-      <VStack w="40%" h="full">
-        <Image src="/logoSVG.svg" w="40%" h="40%" mt="10" />
+    <VStack pb="32" h="full">
+      <VStack w="900px" h="full">
+        <Box
+          as="button"
+          w="60%"
+          onClick={() => {
+            router.reload();
+          }}
+          mt="10"
+        >
+          <Image src="/logoSVG.svg" />
+        </Box>
         <Text mb="18" fontSize="xl">
           Accelerate your career trajectory.
         </Text>
@@ -96,11 +109,17 @@ export default function Home() {
         </form>
 
         {profile && (
-          <Box w="100%" borderColor="gray.300" borderWidth="1">
+          <Box w="100%" borderColor="gray.300" borderWidth="1" mt="3">
             <HStack mb="4">
               <Image
-                src={profile.displayPictureUrl + profile.img_100_100}
+                src={
+                  profile.displayPictureUrl && profile.img_100_100
+                    ? profile.displayPictureUrl + profile.img_100_100
+                    : "https://static.licdn.com/aero-v1/sc/h/244xhbkr7g40x6bsu4gi6q4ry"
+                }
                 borderRadius="50%"
+                w="100px"
+                h="100px"
               ></Image>
               <Box ml="2">
                 <Heading fontSize="3xl">
@@ -133,48 +152,58 @@ export default function Home() {
                   >
                     What your future could hold...
                   </Text>
-                  <Future prediction={predictions[0]} profile={profile}/>
+                  <Future prediction={predictions[0]} profile={profile} />
                 </Box>
               </Skeleton>
             </Box>
-            <Box mb="4">
-              <Heading fontSize="xl">Summary</Heading>
-              <Text>{profile.summary}</Text>
-            </Box>
-            <Box>
-              <Heading fontSize="xl">Experience</Heading>
-
-              {profile.experience.map((exp: any, i: number) => (
-                <Fragment key={i}>
-                  {i !== 0 && <Divider my="3" />}
-                  <HStack alignItems={"flex-start"}>
-                    {exp.companyLogoUrl && exp.img_100_100 ? (
-                      <Image
-                        src={exp.companyLogoUrl + exp.img_100_100}
-                        w="48px"
-                        h="48px"
-                      ></Image>
-                    ) : (
-                      <Image
-                        src="https://static.licdn.com/sc/h/aajlclc14rr2scznz5qm2rj9u"
-                        w="48px"
-                        h="48px"
-                      ></Image>
-                    )}
-                    <Box>
-                      <Text fontWeight="extrabold" fontSize="lg">
-                        {exp.title}
-                      </Text>
-                      <Text fontSize="lg">{exp.companyName}</Text>
-                      <Text color="#999999">{exp.locationName}</Text>
-                      <Text whiteSpace={"pre-line"}>{exp.description}</Text>
-                    </Box>
-                  </HStack>
-                </Fragment>
-              ))}
-            </Box>
+            {profile.summary && (
+              <Box mb="4">
+                <Heading fontSize="xl">Summary</Heading>
+                <Text>{profile.summary}</Text>
+              </Box>
+            )}
+            {profile.experience && profile.experience.length > 0 && (
+              <Box>
+                <Heading fontSize="xl" mb="2">
+                  Experience
+                </Heading>
+                {profile.experience.map((exp: any, i: number) => (
+                  <Fragment key={i}>
+                    {i !== 0 && <Divider my="3" />}
+                    <HStack alignItems={"flex-start"}>
+                      {exp.companyLogoUrl && exp.img_100_100 ? (
+                        <Image
+                          src={exp.companyLogoUrl + exp.img_100_100}
+                          w="48px"
+                          h="48px"
+                        ></Image>
+                      ) : (
+                        <Image
+                          src="https://static.licdn.com/sc/h/aajlclc14rr2scznz5qm2rj9u"
+                          w="48px"
+                          h="48px"
+                        ></Image>
+                      )}
+                      <Box>
+                        <Text fontWeight="extrabold" fontSize="lg">
+                          {exp.title}
+                        </Text>
+                        <Text fontSize="lg">{exp.companyName}</Text>
+                        <Text color="#999999">{exp.locationName}</Text>
+                        <Text whiteSpace={"pre-line"}>{exp.description}</Text>
+                      </Box>
+                    </HStack>
+                  </Fragment>
+                ))}
+              </Box>
+            )}
           </Box>
         )}
+        <Box>
+        <Heading mt="10" fontSize="3xl">
+          What is Trajectify?
+        </Heading>
+        </Box>
       </VStack>
     </VStack>
   );

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   HStack,
   Heading,
   Image,
@@ -8,24 +9,36 @@ import {
   OrderedList,
   Skeleton,
   Text,
+  VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
 
 export default function Future({ prediction, profile }: { prediction: any, profile: any }) {
   const [showNextSteps, setShowNextSteps] = useState(false);
   const [pressedBefore, setPressedBefore] = useState(false);
   const [steps, setSteps] = useState([]);
+  const [firstParagraph, setFirstParagraph] = useState("");
+
+  useEffect(() => {
+    setPressedBefore(false);
+    setSteps([]);
+    setFirstParagraph("");
+    setShowNextSteps(false);
+  }, [profile.public_id]);
 
   const loadData = () => {
     (async () => {
+        const newProfile = JSON.parse(JSON.stringify(profile));
+        newProfile.experience.unshift(prediction);
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/predict_next_steps`, {
             method: "POST",
-            body: JSON.stringify(profile),
+            body: JSON.stringify(newProfile),
         });
 
-        const data = (await res.json()).nextSteps;
-        setSteps(data);
+        const response = await res.json();
+        setSteps(response.nextSteps);
+        setFirstParagraph(response.firstParagraph);
     })();
   };
 
@@ -41,10 +54,11 @@ export default function Future({ prediction, profile }: { prediction: any, profi
         <Text>{prediction?.title ?? "Dummy"}</Text>
         {/* <Text>{predictions[0]?.locationName ?? "Dummy"}</Text> */}
         <Text whiteSpace={"pre-line"}>
-          {prediction?.description ?? "Dummy"}
+          {prediction?.description.trim() ?? "Dummy"}
         </Text>
         <Button
-            mt="2"
+            mt="4"
+            mb="2"
           size="xm"
           rightIcon={
             showNextSteps ? <ChevronUp size={24} /> : <ChevronDown size={24} />
@@ -62,12 +76,14 @@ export default function Future({ prediction, profile }: { prediction: any, profi
           Steps
         </Button>
         {showNextSteps && (
-          <Skeleton isLoaded={steps.length > 0} mt="2">
-            <OrderedList>
+          <Skeleton isLoaded={steps.length > 0} mt="2" w="80%">
+            <Box mb="2" fontWeight="bold" >
+            {firstParagraph ? <Text>{firstParagraph}</Text> : <Text>{"placeholder ".repeat(100)}</Text>}</Box>
+            <VStack alignItems="flex-start">
               {(steps.length > 0?steps:["testing", "testing", "testing"]).map((step, i) => (
-                <ListItem key={i}>{step}</ListItem>
+                <Checkbox>{step}</Checkbox>
               ))}
-            </OrderedList>
+            </VStack>
           </Skeleton>
         )}
       </Box>
