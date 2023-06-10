@@ -18,6 +18,7 @@ import { Fragment, useState } from "react";
 import Future from "./Future";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import logo from "../../public/logo.svg";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -79,7 +80,7 @@ export default function Home() {
           }}
           mt="10"
         >
-          <Image src="/logoSVG.svg" />
+          <Image src={logo.src} />
         </Box>
         <Text mb="18" fontSize="xl">
           Accelerate your career trajectory.
