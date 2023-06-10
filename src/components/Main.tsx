@@ -80,8 +80,8 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <VStack pb="32" h="full">
-      <VStack w="900px" h="full">
+    <VStack pb="64" justifyContent={"center"} overflowY="scroll" minH="100%">
+      <VStack w="900px">
         <Box
           as="button"
           w="60%"
@@ -99,12 +99,14 @@ export default function Home() {
           <FormControl isInvalid={isError} w="100%">
             <HStack>
               <Input
+                size="lg"
                 type="username"
                 value={input}
                 onChange={handleInputChange}
                 placeholder="LinkedIn username"
               />
               <Button
+                size="lg"
                 colorScheme="red"
                 type="submit"
                 ml="1"
@@ -120,26 +122,35 @@ export default function Home() {
         </form>
 
         {profile && (
-          <Box w="100%" borderColor="gray.300" borderWidth="1" mt="3">
+          <Box
+            w="100%"
+            borderColor="gray.300"
+            borderWidth="1"
+            mt="3"
+            position="relative"
+          >
             <HStack mb="4">
               <Skeleton isLoaded={!isLoading} borderRadius="50%">
-              <Image
-                src={
-                  profile.displayPictureUrl && profile.img_100_100
-                    ? profile.displayPictureUrl + profile.img_100_100
-                    : "https://static.licdn.com/aero-v1/sc/h/244xhbkr7g40x6bsu4gi6q4ry"
-                }
-                borderRadius="50%"
-                w="100px"
-                h="100px"
-              ></Image></Skeleton>
+                <Image
+                  src={
+                    profile.displayPictureUrl && profile.img_100_100
+                      ? profile.displayPictureUrl + profile.img_100_100
+                      : "https://static.licdn.com/aero-v1/sc/h/244xhbkr7g40x6bsu4gi6q4ry"
+                  }
+                  borderRadius="50%"
+                  w="100px"
+                  h="100px"
+                ></Image>
+              </Skeleton>
               <Box ml="2">
-              <Skeleton isLoaded={!isLoading}>
-                <Heading fontSize="3xl" mb="2">
-                  {profile.firstName} {profile.lastName}
-                </Heading></Skeleton>
-              <Skeleton isLoaded={!isLoading}>
-                <Text>{profile.headline}</Text></Skeleton>
+                <Skeleton isLoaded={!isLoading}>
+                  <Heading fontSize="3xl" mb="2">
+                    {profile.firstName} {profile.lastName}
+                  </Heading>
+                </Skeleton>
+                <Skeleton isLoaded={!isLoading}>
+                  <Text>{profile.headline}</Text>
+                </Skeleton>
               </Box>
             </HStack>
             <Box>
@@ -171,68 +182,50 @@ export default function Home() {
               </Skeleton>
             </Box>
             <Skeleton isLoaded={!isLoading}>
-            {profile.summary && (
-              <Box mb="4">
-                <Heading fontSize="xl">Summary</Heading>
-                <Text>{profile.summary}</Text>
-              </Box>
-            )}
-            {profile.experience && profile.experience.length > 0 && (
-              <Box>
-                <Heading fontSize="xl" mb="2">
-                  Experience
-                </Heading>
-                {profile.experience.map((exp: any, i: number) => (
-                  <Fragment key={i}>
-                    {i !== 0 && <Divider my="3" />}
-                    <HStack alignItems={"flex-start"}>
-                      {exp.companyLogoUrl && exp.img_100_100 ? (
-                        <Image
-                          src={exp.companyLogoUrl + exp.img_100_100}
-                          w="48px"
-                          h="48px"
-                        ></Image>
-                      ) : (
-                        <Image
-                          src="https://static.licdn.com/sc/h/aajlclc14rr2scznz5qm2rj9u"
-                          w="48px"
-                          h="48px"
-                        ></Image>
-                      )}
-                      <Box>
-                        <Text fontWeight="extrabold" fontSize="lg">
-                          {exp.title}
-                        </Text>
-                        <Text fontSize="lg">{exp.companyName}</Text>
-                        <Text color="#999999">{exp.locationName}</Text>
-                        <Text whiteSpace={"pre-line"}>{exp.description}</Text>
-                      </Box>
-                    </HStack>
-                  </Fragment>
-                ))}
-              </Box>
-            )}</Skeleton>
+              {(profile.summary || isLoading) && (
+                <Box mb="4">
+                  <Heading fontSize="xl">Summary</Heading>
+                  <Text>{profile.summary ?? "Placeholder ".repeat(300)}</Text>
+                </Box>
+              )}
+              {(profile.experience && profile.experience.length > 0 || isLoading) && (
+                <Box>
+                  <Heading fontSize="xl" mb="2">
+                    Experience
+                  </Heading>
+                  {(profile.experience??[]).map((exp: any, i: number) => (
+                    <Fragment key={i}>
+                      {i !== 0 && <Divider my="3" />}
+                      <HStack alignItems={"flex-start"}>
+                        {exp.companyLogoUrl && exp.img_100_100 ? (
+                          <Image
+                            src={exp.companyLogoUrl + exp.img_100_100}
+                            w="48px"
+                            h="48px"
+                          ></Image>
+                        ) : (
+                          <Image
+                            src="https://static.licdn.com/sc/h/aajlclc14rr2scznz5qm2rj9u"
+                            w="48px"
+                            h="48px"
+                          ></Image>
+                        )}
+                        <Box>
+                          <Text fontWeight="extrabold" fontSize="lg">
+                            {exp.title}
+                          </Text>
+                          <Text fontSize="lg">{exp.companyName}</Text>
+                          <Text color="#999999">{exp.locationName}</Text>
+                          <Text whiteSpace={"pre-line"}>{exp.description}</Text>
+                        </Box>
+                      </HStack>
+                    </Fragment>
+                  ))}
+                </Box>
+              )}
+            </Skeleton>
           </Box>
         )}
-        <Box>
-          <Heading mt="10" fontSize="3xl" mb="2">
-            What is Trajectify?
-          </Heading>
-          <Text>
-            Trajectify is a web app that helps you build and achieve your future
-            career goals based on what other people in your same shoes have
-            achieved! You input your LinkedIn profile, after which Trajectify
-            will generate a LinkedIn-style career entry, complete with tangible
-            steps you can take to reach that goal. Unlike pre-existing language
-            models, Trajectify uses a fine-tuned neural network trained directly
-            on students from institutions across Canada, allowing for a much
-            higher degree of accuracy.
-          </Text>
-          <Heading mt="10" fontSize="3xl" mb="2">
-          How does Trajectify work?
-          </Heading>
-          
-        </Box>
       </VStack>
     </VStack>
   );

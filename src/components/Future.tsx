@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "react-feather";
+import debounce from "lodash.debounce";
 
 export default function Future({ prediction, profile }: { prediction: any, profile: any }) {
   const [showNextSteps, setShowNextSteps] = useState(false);
@@ -26,6 +27,13 @@ export default function Future({ prediction, profile }: { prediction: any, profi
     setFirstParagraph("");
     setShowNextSteps(false);
   }, [profile.public_id]);
+
+  useEffect(() => {
+    if (prediction && !pressedBefore) {
+      setPressedBefore(true);
+      debouncedLoadData();
+    }
+  }, [prediction?.companyName, prediction?.title, prediction?.description]);
 
   const loadData = () => {
     (async () => {
@@ -44,6 +52,8 @@ export default function Future({ prediction, profile }: { prediction: any, profi
         setFirstParagraph(response.firstParagraph);
     })();
   };
+
+  const debouncedLoadData = debounce(loadData, 500);
 
   return (
     <HStack alignItems={"flex-start"}>
@@ -71,9 +81,9 @@ export default function Future({ prediction, profile }: { prediction: any, profi
           onClick={() => {
             setShowNextSteps((v) => !v);
             if (!pressedBefore) {
-              loadData();
+              setPressedBefore(true);
+              debouncedLoadData();
             }
-            setPressedBefore(true);
           }}
         >
           Steps
@@ -83,8 +93,8 @@ export default function Future({ prediction, profile }: { prediction: any, profi
             <Box mb="2" fontWeight="bold" >
             {firstParagraph ? <Text>{firstParagraph}</Text> : <Text>{"placeholder ".repeat(100)}</Text>}</Box>
             <VStack alignItems="flex-start">
-              {(steps.length > 0?steps:["testing", "testing", "testing"]).map((step, i) => (
-                <Checkbox>{step}</Checkbox>
+              {(steps.length > 0? steps:["testing", "testing", "testing"]).map((step, i) => (
+                <Checkbox key={i}>{step}</Checkbox>
               ))}
             </VStack>
           </Skeleton>
