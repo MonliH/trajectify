@@ -34,6 +34,9 @@ export default function Future({ prediction, profile }: { prediction: any, profi
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/predict_next_steps`, {
             method: "POST",
             body: JSON.stringify(newProfile),
+            headers: new Headers({
+              "ngrok-skip-browser-warning": "true"
+            })
         });
 
         const response = await res.json();

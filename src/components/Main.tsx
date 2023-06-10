@@ -41,7 +41,12 @@ export default function Home() {
     (async () => {
       setIsLoading(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/get_profile?username=${input}`
+        `${process.env.NEXT_PUBLIC_API_URL}/get_profile?username=${input}`,
+        {
+            headers: new Headers({
+              "ngrok-skip-browser-warning": "true"
+            })
+        }
       );
       const data = await res.json();
 
@@ -55,6 +60,9 @@ export default function Home() {
           {
             method: "POST",
             body: JSON.stringify(data),
+            headers: new Headers({
+              "ngrok-skip-browser-warning": "true"
+            })
           }
         );
         const predictionData = await prediction.json();
