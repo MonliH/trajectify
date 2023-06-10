@@ -1,0 +1,29 @@
+Name: Jonathan Li
+
+Industry: Computer Software
+Country: Canada
+Headline: Software Developer & ML Researcher @ Queen's University
+Summary: I enjoy working with others to solve interesting problems. I'm doing machine learning research at Queen's University, software development for another research group there, and web development for my web firm. You can find some of my open-source projects—ranging from compilers to full-stack websites—on my GitHub (at github.com/MonliH)
+---
+Volunteering:
+Not listed
+---
+Honors & Awards:
+Not listed
+---
+Education:
+School name: Kingston Secondary School
+Description: - Highest academic average in grade 9 out of ~200 students
+- Top 3 academic average in grade 10 (first no longer announced)
+---
+Experience:
+Company name: Riftium
+Title: Co-Founder
+Description: - Co-founded Riftium, a web design firm backed by the Ontario Summer Company program
+- Generated over 8.5K in revenue by designing and implementing modern full-stack websites for several local businesses
+Starting Date: 06/2022
+
+Company name: Queen's University
+Title: Software Developer
+Description: - Developing a multi-platform (swift iOS, typescript react web) posture monitoring service using wearable sensors to reduce spinal injury, materializing the research team’s idea into a functional product
+Starting Date: 07/2021

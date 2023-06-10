@@ -1,0 +1,6 @@
+Company name: Google
+Title: Machine Learning Engineer
+Description: 
+- Utilized skills and knowledge gained from machine learning research at Queen's University to develop innovative machine learning models and algorithms to improve Google's search engine algorithms
+- Worked extensively with the Google search team to ensure that machine learning models and algorithms are integrated seamlessly into the search engine
+Starting Date: 06/2023

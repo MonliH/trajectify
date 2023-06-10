@@ -17,7 +17,7 @@ dotenv.load_dotenv(".env")
 
 app = FastAPI()
 
-origins = ["*"]
+origins = ["https://trajectify.vercel.app", "http://trajectify.vercel.app", "http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -130,30 +130,6 @@ def parse_model_output(output: str):
     starting_month, starting_year = lines[-1].split(": ")[1].split("/")
     return {"companyName": company_name, "title": title, "description": description, "timePeriod": {"startDate": {"month": int(starting_month), "year": int(starting_year)}}}
 
-
-@app.post("/predict_experience")
-async def predict_experience(req: Request):
-    profile = await req.json()
-    text, experiences = format_profile(profile)
-    text += "---\nExperience:\n" + "\n\n".join(e[0] for e in experiences)
-    print(text)
-    instruction = "Predict what the person's next prestigious experience on LinkedIn is going to be."
-    prompt = "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:"
-    filled_text = prompt.format(instruction=instruction, input=text)
-
-    # query model here
-
-    model_output = """Company name: Queen's University
-Title: Machine Learning Research Associate
-Description: - Published paper as first author to the 2023 Association of Computational Linguistics (ACL) conference, "Prefix-Propagation: Parameter-Efficient Tuning for Long Sequences"
-- Published paper as first author to the Natural Legal Language Processing workshop co-located at EMNLP 2022, "Parameter-Efficient Legal Domain Adaptation"
-- Researching natural language processing with interests in parameter-efficient tuning, long document modelling, and foundation models, under the supervision of Dr. Xiaodan Zhu
-Starting Date: 06/2022"""
-
-    await asyncio.sleep(3)
-
-    return parse_model_output(model_output)
-
 openai.organization = os.environ["OPENAI_ORG"]
 openai.api_key = os.environ["OPENAI_API_KEY"]
 MODEL = "gpt-3.5-turbo"
@@ -167,15 +143,67 @@ async def predict_next_steps(req: Request):
 
     response = openai.ChatCompletion.create(
         model=MODEL,
-        messages=[{"role": "system", "content":"""Given is the LinkedIn profile of a user. You are to list achievable goals that the user can make to be able to have the position that they say they want.
+        messages=[{"role": "system", "content":"""Given is the LinkedIn profile of a user. You are to list achievable goals that the user can make to develop the skills needed to achieve the entry in their LinkedIn profile that they want.
 
 Try to consider the user's previous experiences and expertise while creating these goals. They should be achievable and specific. Do not make the goals too specific for the position itself.
 
-List the goals in point form (starting with "-"). You must only provide the goals and no additional comments."""},
+In the first paragraph of the response, state what skills the person already has based on their experiences and how this would help them. Always use the second person ("you"), referring to the person using "you". Then, list the goals in point form (starting with "-") they should make to improve skills that are lacking:
+
+<Paragraph>
+- <Bullet point>
+- <Bullet point>
+..."""},
 {"role": "user", "content": text}],
         max_tokens=512,
         temperature=0.3,
+        top_p=1
     )
 
-    r = response["choices"][0]["message"]["content"]
-    return {"nextSteps": [point.replace("- ", "") for point in r.split("\n")]}
+    content = response["choices"][0]["message"]["content"]
+    split_content = content.split("\n- ")
+    first_paragraph = split_content[0]
+    rest = "\n- ".join(split_content[1:])
+    return {"nextSteps": [point.replace("- ", "") for point in rest.split("\n")], "firstParagraph": first_paragraph}
+
+
+with open("fewshot_example_value.txt", "r") as f:
+    example_value = f.read()
+
+with open("fewshot_example_response.txt", "r") as f:
+    example_response = f.read()
+
+@app.post("/predict_experience")
+async def predict_experience(req: Request):
+    profile = await req.json()
+    text, experiences = format_profile(profile)
+    text += "---\nExperience:\n" + "\n\n".join(e[0] for e in experiences)
+    if len(experiences) == 0:
+        text += "Not listed"
+    # instruction = "Predict what the person's next prestigious experience on LinkedIn is going to be."
+    # prompt = "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\n{instruction}\n\n### Input:\n{input}\n\n### Response:"
+    # filled_text = prompt.format(instruction=instruction, input=text)
+
+    # query model here
+    prompt = """Given is the LinkedIn profile of a user. Provide a realistic future career for the person in question, in the following format:
+
+Company name: <name>
+Title: <title>
+Description: - <point>
+- <point>
+- ...
+Starting Date: <month>/<year>
+
+Description should be in the first person in the past tense.
+"""
+
+    examples = [{"role": "user", "content": example_value}, {"role": "assistant", "content": example_response}]
+    response = openai.ChatCompletion.create(
+        model=MODEL,
+        messages=[{"role": "system", "content": prompt}, *examples, {"role": "user", "content": text}],
+        max_tokens=512,
+        temperature=1,
+        top_p=1
+    )
+
+    result = response["choices"][0]["message"]["content"]
+    return parse_model_output(result)
