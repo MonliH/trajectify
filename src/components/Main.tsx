@@ -38,14 +38,15 @@ export default function Home() {
     if (input === "") {
       return;
     }
+    setPredictions([]);
     (async () => {
       setIsLoading(true);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/get_profile?username=${input}`,
         {
-            headers: new Headers({
-              "ngrok-skip-browser-warning": "true"
-            })
+          headers: new Headers({
+            "ngrok-skip-browser-warning": "true",
+          }),
         }
       );
       const data = await res.json();
@@ -55,14 +56,15 @@ export default function Home() {
         setProfile(data);
 
         setIsPredictionLoading(true);
+        setIsLoading(false);
         const prediction = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/predict_experience`,
           {
             method: "POST",
             body: JSON.stringify(data),
             headers: new Headers({
-              "ngrok-skip-browser-warning": "true"
-            })
+              "ngrok-skip-browser-warning": "true",
+            }),
           }
         );
         const predictionData = await prediction.json();
@@ -120,6 +122,7 @@ export default function Home() {
         {profile && (
           <Box w="100%" borderColor="gray.300" borderWidth="1" mt="3">
             <HStack mb="4">
+              <Skeleton isLoaded={!isLoading} borderRadius="50%">
               <Image
                 src={
                   profile.displayPictureUrl && profile.img_100_100
@@ -129,12 +132,14 @@ export default function Home() {
                 borderRadius="50%"
                 w="100px"
                 h="100px"
-              ></Image>
+              ></Image></Skeleton>
               <Box ml="2">
-                <Heading fontSize="3xl">
+              <Skeleton isLoaded={!isLoading}>
+                <Heading fontSize="3xl" mb="2">
                   {profile.firstName} {profile.lastName}
-                </Heading>
-                <Text>{profile.headline}</Text>
+                </Heading></Skeleton>
+              <Skeleton isLoaded={!isLoading}>
+                <Text>{profile.headline}</Text></Skeleton>
               </Box>
             </HStack>
             <Box>
@@ -165,6 +170,7 @@ export default function Home() {
                 </Box>
               </Skeleton>
             </Box>
+            <Skeleton isLoaded={!isLoading}>
             {profile.summary && (
               <Box mb="4">
                 <Heading fontSize="xl">Summary</Heading>
@@ -205,13 +211,27 @@ export default function Home() {
                   </Fragment>
                 ))}
               </Box>
-            )}
+            )}</Skeleton>
           </Box>
         )}
         <Box>
-        <Heading mt="10" fontSize="3xl">
-          What is Trajectify?
-        </Heading>
+          <Heading mt="10" fontSize="3xl" mb="2">
+            What is Trajectify?
+          </Heading>
+          <Text>
+            Trajectify is a web app that helps you build and achieve your future
+            career goals based on what other people in your same shoes have
+            achieved! You input your LinkedIn profile, after which Trajectify
+            will generate a LinkedIn-style career entry, complete with tangible
+            steps you can take to reach that goal. Unlike pre-existing language
+            models, Trajectify uses a fine-tuned neural network trained directly
+            on students from institutions across Canada, allowing for a much
+            higher degree of accuracy.
+          </Text>
+          <Heading mt="10" fontSize="3xl" mb="2">
+          How does Trajectify work?
+          </Heading>
+          
         </Box>
       </VStack>
     </VStack>
