@@ -81,7 +81,7 @@ export default function Home() {
 
   return (
     <VStack pb="64" justifyContent={"center"} overflowY="scroll" minH="100%">
-      <VStack w="900px">
+      <VStack w="min(900px,95vw)">
         <Box
           as="button"
           w="60%"
