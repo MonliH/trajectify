@@ -138,8 +138,8 @@ export default function Home() {
                       : "https://static.licdn.com/aero-v1/sc/h/244xhbkr7g40x6bsu4gi6q4ry"
                   }
                   borderRadius="50%"
-                  w="100px"
-                  h="100px"
+                  minH="100px"
+                  minW="100px"
                 ></Image>
               </Skeleton>
               <Box ml="2">
