@@ -122,7 +122,9 @@ def parse_model_output(output: str):
     - Researching natural language processing with interests in parameter-efficient tuning, long document modelling, and foundation models, under the supervision of Dr. Xiaodan Zhu
     Starting Date: 06/2022
     """
-    lines = output.split("\n")
+    splits = output.split("\nStarting Date: ")
+    lines = splits[0].split("\n")
+    lines.append("Starting Date: " + splits[1].split("\n")[0])
     company_name = ": ".join(lines[0].split(": ")[1:])
     title = ": ".join(lines[1].split(": ")[1:])
     description_segments = "\n".join(lines[2:-1]).split(": ")
@@ -172,9 +174,7 @@ with open("fewshot_example_value.txt", "r") as f:
 with open("fewshot_example_response.txt", "r") as f:
     example_response = f.read()
 
-@app.post("/predict_experience")
-async def predict_experience(req: Request):
-    profile = await req.json()
+def generate_experience(profile):
     text, experiences = format_profile(profile)
     text += "---\nExperience:\n" + "\n\n".join(e[0] for e in experiences)
     if len(experiences) == 0:
@@ -206,4 +206,16 @@ Description should be in the first person in the past tense.
     )
 
     result = response["choices"][0]["message"]["content"]
-    return parse_model_output(result)
+    try:
+        parsed_repr = parse_model_output(result)
+    except:
+        return generate_experience(profile)
+    if not parsed_repr["description"]:
+        return generate_experience(profile)
+    return parsed_repr
+
+
+@app.post("/predict_experience")
+async def predict_experience(req: Request):
+    profile = await req.json()
+    return generate_experience(profile)
