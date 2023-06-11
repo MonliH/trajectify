@@ -221,7 +221,46 @@ export default function Home() {
                       </HStack>
                     </Fragment>
                   ))}
+
                 </Box>
+              )}
+              {(profile.education && profile.education.length > 0 || isLoading) && (
+                  <>
+                  <Heading fontSize="xl" mt="4" mb="3">
+                    Education
+                  </Heading>
+                  {(profile.education??[]).map((edu: any, i: number) => {
+                    const startYear = edu.timePeriod && edu.timePeriod.startDate && edu.timePeriod.startDate.year
+                    const endYear = edu.timePeriod && edu.timePeriod.endDate && edu.timePeriod.endDate.year
+
+                    const str = `${startYear ?? ""} - ${endYear ?? ""}`;
+
+                    return <Fragment key={i}>
+                      {i !== 0 && <Divider my="3" />}
+                      <HStack alignItems={"flex-start"}>
+                        {edu.school && edu.school.img_100_100 && edu.school.logoUrl ? (
+                          <Image
+                            src={edu.school.logoUrl + edu.school.img_100_100}
+                            w="48px"
+                            h="48px"
+                          ></Image>
+                        ) : (
+                          <Image
+                            src="https://static.licdn.com/sc/h/aajlclc14rr2scznz5qm2rj9u"
+                            w="48px"
+                            h="48px"
+                          ></Image>
+                        )}
+                        <Box>
+                          <Text fontWeight="extrabold" fontSize="lg">
+                            {edu.schoolName}
+                          </Text>
+                          {str != " - " && <Text color="#999999">{str}</Text>}
+                          <Text whiteSpace={"pre-line"}>{edu.description}</Text>
+                        </Box>
+                      </HStack>
+                    </Fragment>
+              })}</>
               )}
             </Skeleton>
           </Box>
