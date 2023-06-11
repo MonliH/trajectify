@@ -5,10 +5,12 @@ specifiers:
   '@chakra-ui/react': ^2.7.0
   '@emotion/react': ^11.11.1
   '@emotion/styled': ^11.11.0
+  '@types/lodash.debounce': ^4.0.7
   '@types/node': 20.2.6
   '@types/react': 18.2.10
   '@types/react-dom': 18.2.4
   framer-motion: ^10.12.16
+  lodash.debounce: ^4.0.8
   next: 13.4.4
   react: 18.2.0
   react-dom: 18.2.0
@@ -20,10 +22,12 @@ dependencies:
   '@chakra-ui/react': 2.7.0_jk35s237lnsngkxvxhsa4uhywa
   '@emotion/react': 11.11.1_x2uulb4f4l2hlhjno5nsvryvdm
   '@emotion/styled': 11.11.0_mzv3dl67cczk6jvq47xsmcbana
+  '@types/lodash.debounce': 4.0.7
   '@types/node': 20.2.6
   '@types/react': 18.2.10
   '@types/react-dom': 18.2.4
   framer-motion: 10.12.16_biqbaboplfbrettd7655fr4n2y
+  lodash.debounce: 4.0.8
   next: 13.4.4_biqbaboplfbrettd7655fr4n2y
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -1396,6 +1400,12 @@ packages:
       tslib: 2.5.3
     dev: false
 
+  /@types/lodash.debounce/4.0.7:
+    resolution: {integrity: sha512-X1T4wMZ+gT000M2/91SYj0d/7JfeNZ9PeeOldSNoE/lunLeQXKvkmIumI29IaKMotU/ln/McOIvgzZcQ/3TrSA==}
+    dependencies:
+      '@types/lodash': 4.14.195
+    dev: false
+
   /@types/lodash.mergewith/4.6.7:
     resolution: {integrity: sha512-3m+lkO5CLRRYU0fhGRp7zbsGi6+BZj0uTVSwvcKU+nSlhjA9/QRNfuSGnD2mX6hQA7ZbmcCkzk5h4ZYGOtk14A==}
     dependencies:
@@ -1661,6 +1671,10 @@ packages:
 
   /lines-and-columns/1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
+    dev: false
+
+  /lodash.debounce/4.0.8:
+    resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
     dev: false
 
   /lodash.mergewith/4.6.2:
